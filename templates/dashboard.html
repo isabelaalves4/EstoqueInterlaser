@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Estoque{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2 class="page-title">Dashboard</h2>
+    <p class="page-subtitle">Visão geral do estoque e das últimas movimentações.</p>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-sm-6 col-xl-3">
+    <div class="resumo-card">
+      <div class="resumo-titulo">Total de produtos</div>
+      <p class="resumo-valor">{{ total_produtos }}</p>
+      <div class="resumo-extra">Itens cadastrados no sistema.</div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="resumo-card">
+      <div class="resumo-titulo">Saldo total</div>
+      <p class="resumo-valor">{{ total_estoque|format_int }}</p>
+      <div class="resumo-extra">Soma de B1 + B2 de todos os produtos.</div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="resumo-card">
+      <div class="resumo-titulo">Abaixo do mínimo</div>
+      <p class="resumo-valor text-danger">{{ abaixo_minimo }}</p>
+      <div class="resumo-extra">Produtos com saldo menor que o mínimo.</div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="resumo-card">
+      <div class="resumo-titulo">Solicitações abertas</div>
+      <p class="resumo-valor text-warning">{{ pendentes }}</p>
+      <div class="resumo-extra">Pendentes ou parciais aguardando atendimento.</div>
+    </div>
+  </div>
+</div>
+
+<div class="content-card">
+  <div class="content-card-header">Últimas movimentações</div>
+  <div class="content-card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="ps-3">ID</th>
+            <th>Data</th>
+            <th>Código</th>
+            <th>Descrição</th>
+            <th>Tipo</th>
+            <th>Quantidade</th>
+            <th>Barracão</th>
+            <th>Usuário</th>
+            <th>Origem</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for mov in movimentacoes %}
+          <tr>
+            <td class="ps-3">#{{ mov[0] }}</td>
+            <td>{{ mov[9] }}</td>
+            <td>{{ mov[1] }}</td>
+            <td>{{ mov[2] }}</td>
+            <td>
+              {% if mov[3] == 'ENTRADA' %}
+                <span class="badge text-bg-success badge-status">Entrada</span>
+              {% elif mov[3] == 'SAIDA' %}
+                <span class="badge text-bg-danger badge-status">Saída</span>
+              {% else %}
+                <span class="badge text-bg-secondary badge-status">Ajuste</span>
+              {% endif %}
+            </td>
+            <td>{{ mov[4] | format_int }}</td>
+            <td>{{ mov[5] or '-' }}</td>
+            <td>{{ mov[6] or '-' }}</td>
+            <td>{{ mov[7] or '-' }}</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="9" class="text-center text-muted py-4">Nenhuma movimentação registrada.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

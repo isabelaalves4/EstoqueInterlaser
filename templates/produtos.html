@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Produtos{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2 class="page-title">Produtos</h2>
+    <p class="page-subtitle">Consulta e manutenção do cadastro de produtos.</p>
+  </div>
+  <div>
+    <a href="{{ url_for('novo_produto') }}" class="btn btn-warning fw-bold">+ Novo Produto</a>
+  </div>
+</div>
+
+<div class="content-card mb-4">
+  <div class="content-card-body">
+    <form method="get" class="row g-3">
+      <div class="col-md-10">
+        <input type="text" name="busca" value="{{ busca }}" class="form-control" placeholder="Buscar por código, descrição ou grupo">
+      </div>
+      <div class="col-md-2 d-grid">
+        <button type="submit" class="btn btn-warning fw-bold">Filtrar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="content-card">
+  <div class="content-card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="ps-3">Código</th>
+            <th>Descrição</th>
+            <th>Grupo</th>
+            <th>Un.</th>
+            <th>B1</th>
+            <th>B2</th>
+            <th>Total</th>
+            <th>Mínimo</th>
+            <th>Situação</th>
+            <th class="text-end pe-3">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in produtos %}
+          <tr>
+            <td class="ps-3 fw-semibold">{{ p[1] }}</td>
+            <td>{{ p[2] }}</td>
+            <td>{{ p[6] or '-' }}</td>
+            <td>{{ p[3] or '-' }}</td>
+            <td>{{ p[8] | format_int }}</td>
+            <td>{{ p[9] | format_int }}</td>
+            <td class="fw-bold">{{ p[10] | format_int }}</td>
+            <td>{{ p[5] | format_int }}</td>
+            <td>
+              {% if p[10] < p[5] %}
+                <span class="badge text-bg-danger badge-status">Abaixo do mínimo</span>
+              {% else %}
+                <span class="badge text-bg-success badge-status">OK</span>
+              {% endif %}
+            </td>
+            <td class="text-end pe-3">
+              <a href="{{ url_for('editar_produto', id=p[0]) }}" class="btn btn-sm btn-outline-dark">Editar</a>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="10" class="text-center text-muted py-4">Nenhum produto encontrado.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

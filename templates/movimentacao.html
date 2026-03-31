@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Nova Movimentação{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2 class="page-title">Nova Movimentação</h2>
+    <p class="page-subtitle">Registrar entrada, saída ou ajuste de estoque.</p>
+  </div>
+  <div>
+    <a href="{{ url_for('movimentacoes') }}" class="btn btn-outline-secondary">Voltar</a>
+  </div>
+</div>
+
+<div class="content-card">
+  <div class="content-card-body">
+    <form method="POST" class="row g-3">
+      <div class="col-md-12">
+        <label class="form-label">Produto</label>
+        <select name="produto" class="form-select" required>
+          <option value="">Selecione</option>
+          {% for p in produtos %}
+          <option value="{{ p[0] }}">{{ p[1] }} - {{ p[2] }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Tipo</label>
+        <select name="tipo" class="form-select" required>
+          <option value="">Selecione</option>
+          <option value="ENTRADA">Entrada</option>
+          <option value="SAIDA">Saída</option>
+          <option value="AJUSTE">Ajuste</option>
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Quantidade</label>
+        <input type="number" step="0.01" min="0.01" name="quantidade" class="form-control" required>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Barracão</label>
+        <select name="barracao" class="form-select" required>
+          <option value="">Selecione</option>
+          <option value="B1">B1</option>
+          <option value="B2">B2</option>
+        </select>
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">Observação</label>
+        <textarea name="observacao" class="form-control" rows="3" placeholder="Observação opcional"></textarea>
+      </div>
+
+      <div class="col-12">
+        <button type="submit" class="btn btn-warning fw-bold">Salvar Movimentação</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

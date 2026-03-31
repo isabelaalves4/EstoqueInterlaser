@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Solicitações{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2 class="page-title">Solicitações de Saída</h2>
+    <p class="page-subtitle">Controle das solicitações do estoque</p>
+  </div>
+  <div>
+    <a href="{{ url_for('nova_solicitacao') }}" class="btn btn-warning fw-bold">+ Nova Solicitação</a>
+  </div>
+</div>
+
+<div class="content-card mb-4">
+  <div class="content-card-body">
+    <form method="get" class="row g-3">
+      <div class="col-md-6">
+        <input type="text" name="busca" value="{{ busca }}" class="form-control" placeholder="Buscar por código, descrição ou usuário">
+      </div>
+      <div class="col-md-3">
+        <select name="situacao" class="form-select">
+          <option value="">Todas as situações</option>
+          <option value="PENDENTE" {% if filtro_situacao == 'PENDENTE' %}selected{% endif %}>Pendente</option>
+          <option value="PARCIAL" {% if filtro_situacao == 'PARCIAL' %}selected{% endif %}>Parcial</option>
+          <option value="ATENDIDA" {% if filtro_situacao == 'ATENDIDA' %}selected{% endif %}>Atendida</option>
+          <option value="RECUSADA" {% if filtro_situacao == 'RECUSADA' %}selected{% endif %}>Recusada</option>
+        </select>
+      </div>
+      <div class="col-md-3 d-grid d-md-flex justify-content-md-end gap-2">
+        <button type="submit" class="btn btn-warning fw-bold">Filtrar</button>
+        <a href="{{ url_for('solicitacoes') }}" class="btn btn-outline-secondary">Limpar</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="content-card">
+  <div class="content-card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="ps-3">ID</th>
+            <th>Data</th>
+            <th>Código</th>
+            <th>Descrição</th>
+            <th>Qtd. solicitada</th>
+            <th>Qtd. atendida</th>
+            <th>Situação</th>
+            <th>Solicitante</th>
+            <th>Barracão</th>
+            <th class="text-end pe-3">Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in solicitacoes %}
+          <tr>
+            <td class="ps-3">#{{ s[0] }}</td>
+            <td>{{ s[1] }}</td>
+            <td>{{ s[2] }}</td>
+            <td>{{ s[3] }}</td>
+            <td>{{ s[4] | format_int }}</td>
+            <td>{{ s[5] | format_int }}</td>
+            <td>
+              {% if s[6] == 'PENDENTE' %}
+                <span class="badge text-bg-warning badge-status">Pendente</span>
+              {% elif s[6] == 'PARCIAL' %}
+                <span class="badge text-bg-primary badge-status">Parcial</span>
+              {% elif s[6] == 'ATENDIDA' %}
+                <span class="badge text-bg-success badge-status">Atendida</span>
+              {% else %}
+                <span class="badge text-bg-danger badge-status">Recusada</span>
+              {% endif %}
+            </td>
+            <td>{{ s[8] or '-' }}</td>
+            <td>{{ s[7] or '-' }}</td>
+            <td class="text-end pe-3">
+              {% if s[6] in ['PENDENTE', 'PARCIAL'] %}
+              <a href="{{ url_for('atender_solicitacao', id=s[0]) }}" class="btn btn-sm btn-outline-dark">Atender</a>
+              {% else %}
+              <span class="text-muted">Finalizada</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="10" class="text-center text-muted py-4">Nenhuma solicitação encontrada.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

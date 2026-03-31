@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Relatórios{% endblock %}
+
+{% block head_extra %}
+<style>
+  @media print {
+    .no-print, .sidebar, .mobile-topbar, .alert, #overlay { display: none !important; }
+    .main-content { margin: 0 !important; padding: 0 !important; }
+    .content-card { box-shadow: none; border: 1px solid #000; }
+    body { background: #fff; }
+    table { font-size: 12px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header no-print">
+  <div>
+    <h2 class="page-title">Relatórios</h2>
+    <p class="page-subtitle">Geração de relatório para impressão ou PDF</p>
+  </div>
+</div>
+
+<div class="content-card mb-4 no-print">
+  <div class="content-card-body">
+    <form method="get" class="row g-3">
+      <div class="col-md-6">
+        <input type="text" name="busca" value="{{ busca }}" class="form-control" placeholder="Buscar por código ou descrição">
+      </div>
+      <div class="col-md-3">
+        <select name="tipo" class="form-select">
+          <option value="todos" {% if tipo == 'todos' %}selected{% endif %}>Todos</option>
+          <option value="com_saldo" {% if tipo == 'com_saldo' %}selected{% endif %}>Com saldo</option>
+          <option value="abaixo_minimo" {% if tipo == 'abaixo_minimo' %}selected{% endif %}>Abaixo do mínimo</option>
+        </select>
+      </div>
+      <div class="col-md-3 d-grid d-md-flex justify-content-md-end gap-2">
+        <button type="submit" class="btn btn-warning fw-bold">Filtrar</button>
+        <button type="button" class="btn btn-dark" onclick="window.print()">Gerar PDF</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="content-card">
+  <div class="content-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <span>Relatório de Itens</span>
+    <span class="text-muted small">Impressão pelo navegador</span>
+  </div>
+  <div class="content-card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-striped align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="ps-3">Código</th>
+            <th>Descrição</th>
+            <th>Saldo Total</th>
+            <th>Saldo B1</th>
+            <th>Saldo B2</th>
+            <th>Estoque mínimo</th>
+            <th>Situação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in itens %}
+          <tr>
+            <td class="ps-3">{{ item[0] }}</td>
+            <td>{{ item[1] }}</td>
+            <td>{{ item[5] | format_int }}</td>
+            <td>{{ item[2] | format_int }}</td>
+            <td>{{ item[3] | format_int }}</td>
+            <td>{{ item[4] | format_int }}</td>
+            <td>
+              {% if item[5] < item[4] %}
+                <span class="badge text-bg-danger badge-status">Abaixo do mínimo</span>
+              {% else %}
+                <span class="badge text-bg-success badge-status">OK</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="7" class="text-center text-muted py-4">Nenhum item encontrado.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

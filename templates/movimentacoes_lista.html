@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Movimentações{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2 class="page-title">Movimentações</h2>
+    <p class="page-subtitle">Histórico de entradas, saídas e ajustes</p>
+  </div>
+  <div>
+    <a href="{{ url_for('nova_movimentacao') }}" class="btn btn-warning fw-bold">+ Nova Movimentação</a>
+  </div>
+</div>
+
+<div class="content-card mb-4">
+  <div class="content-card-body">
+    <form method="get" class="row g-3">
+      <div class="col-md-5">
+        <input type="text" name="busca" value="{{ busca }}" class="form-control" placeholder="Buscar por código ou descrição">
+      </div>
+      <div class="col-md-3">
+        <select name="tipo" class="form-select">
+          <option value="">Todos os tipos</option>
+          <option value="ENTRADA" {% if filtro_tipo == 'ENTRADA' %}selected{% endif %}>Entrada</option>
+          <option value="SAIDA" {% if filtro_tipo == 'SAIDA' %}selected{% endif %}>Saída</option>
+          <option value="AJUSTE" {% if filtro_tipo == 'AJUSTE' %}selected{% endif %}>Ajuste</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select name="barracao" class="form-select">
+          <option value="">Barracão</option>
+          <option value="B1" {% if filtro_barracao == 'B1' %}selected{% endif %}>B1</option>
+          <option value="B2" {% if filtro_barracao == 'B2' %}selected{% endif %}>B2</option>
+        </select>
+      </div>
+      <div class="col-md-2 d-grid">
+        <button type="submit" class="btn btn-warning fw-bold">Filtrar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="content-card">
+  <div class="content-card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="ps-3">Data</th>
+            <th>Código</th>
+            <th>Descrição</th>
+            <th>Tipo</th>
+            <th>Quantidade</th>
+            <th>Barracão</th>
+            <th>Usuário</th>
+            <th>Origem</th>
+            <th>Observação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for mov in movimentacoes %}
+          <tr>
+            <td class="ps-3">{{ mov[9] }}</td>
+            <td>{{ mov[1] }}</td>
+            <td>{{ mov[2] }}</td>
+            <td>
+              {% if mov[3] == 'ENTRADA' %}
+                <span class="badge text-bg-success badge-status">Entrada</span>
+              {% elif mov[3] == 'SAIDA' %}
+                <span class="badge text-bg-danger badge-status">Saída</span>
+              {% else %}
+                <span class="badge text-bg-secondary badge-status">Ajuste</span>
+              {% endif %}
+            </td>
+            <td>{{ mov[4] | format_int }}</td>
+            <td>{{ mov[5] }}</td>
+            <td>{{ mov[6] or '-' }}</td>
+            <td>{{ mov[7] or '-' }}</td>
+            <td>{{ mov[8] or '-' }}</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="9" class="text-center text-muted py-4">Nenhuma movimentação registrada.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
